@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AdVision AI Pricing — 100 free credits for every new account. Buy more credits to keep creating stunning AI ad videos.">
+  <title>Pricing & Credits — AdVision AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .pricing-hero { padding: 80px 0 48px; text-align: center; }
+    .pricing-hero h1 { margin-bottom: 14px; }
+    .pricing-hero p  { font-size: 1.05rem; max-width: 560px; margin: 0 auto 36px; }
+
+    /* Credits widget */
+    #credits-widget { margin-bottom: 40px; max-width: 480px; margin-left: auto; margin-right: auto; cursor: default; }
+
+    /* How it works strip */
+    .how-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 840px; margin: 0 auto 52px; }
+    .how-card  { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 20px; text-align: center; }
+    .how-card .how-num { font-size: 2rem; font-family:'Outfit',sans-serif; font-weight:800; line-height:1; margin-bottom:8px; }
+    .how-card .how-lbl { font-size: 0.82rem; color: var(--text-300); }
+
+    /* Billing toggle */
+    .billing-toggle-wrap { display:inline-flex; align-items:center; gap:14px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-full); padding:6px 16px; font-size:0.88rem; font-weight:500; }
+    .billing-label { color:var(--text-300); transition:var(--transition); }
+    .billing-label.active { color:var(--text-100); }
+    .toggle-switch { position:relative; width:44px; height:24px; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; inset:0; background:var(--border); border-radius:var(--radius-full); cursor:pointer; transition:var(--transition); }
+    .toggle-slider::before { content:''; position:absolute; left:3px; top:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:var(--transition); }
+    .toggle-switch input:checked + .toggle-slider { background:var(--primary); }
+    .toggle-switch input:checked + .toggle-slider::before { transform:translateX(20px); }
+    .save-badge { background:linear-gradient(135deg,var(--success),#059669); color:#fff; font-size:0.72rem; font-weight:700; padding:3px 10px; border-radius:var(--radius-full); }
+
+    /* Plan cards */
+    .plans-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px; }
+    .plan-card  { padding:36px 28px; border-radius:var(--radius-xl); display:flex; flex-direction:column; position:relative; transition:var(--transition); }
+    .plan-card:hover { transform:translateY(-4px); }
+    .plan-card.featured { background:linear-gradient(135deg,rgba(124,58,237,0.18),rgba(6,182,212,0.1)); border-color:rgba(124,58,237,0.4); box-shadow:0 0 0 1px rgba(124,58,237,0.2),var(--shadow-glow); }
+    .plan-badge { position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; font-size:0.72rem; font-weight:700; padding:5px 16px; border-radius:var(--radius-full); white-space:nowrap; }
+    .plan-icon   { font-size:2.4rem; margin-bottom:16px; }
+    .plan-name   { font-size:1.1rem; font-weight:700; margin-bottom:8px; }
+    .plan-credits{ font-size:0.82rem; font-weight:600; color:var(--accent); background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); border-radius:99px; padding:3px 12px; display:inline-block; margin-bottom:10px; }
+    .plan-price  { font-family:'Outfit',sans-serif; font-size:3rem; font-weight:800; line-height:1; margin-bottom:4px; }
+    .plan-price span { font-size:1.4rem; vertical-align:super; font-weight:600; }
+    .plan-period { font-size:0.82rem; color:var(--text-400); margin-bottom:24px; }
+    .plan-divider{ height:1px; background:var(--border); margin:24px 0; }
+    .plan-features { list-style:none; display:flex; flex-direction:column; gap:10px; flex:1; margin-bottom:28px; }
+    .plan-features li { display:flex; align-items:flex-start; gap:10px; font-size:0.87rem; color:var(--text-200); }
+    .plan-features li .check { color:var(--success); flex-shrink:0; margin-top:2px; }
+    .plan-features li.muted { color:var(--text-400); }
+    .plan-features li.muted .check { color:var(--text-400); }
+
+    /* FAQ */
+    .faq-grid { display:grid; gap:12px; max-width:720px; margin:0 auto; }
+    .faq-item  { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; }
+    .faq-item.open { border-color:var(--border-hov); }
+    .faq-trigger { width:100%; background:none; border:none; padding:18px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; text-align:left; color:var(--text-100); font-size:0.92rem; font-weight:600; font-family:'Inter',sans-serif; gap:12px; }
+    .faq-icon { font-size:1.1rem; transition:transform 0.3s; flex-shrink:0; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); }
+    .faq-body { max-height:0; overflow:hidden; transition:max-height 0.35s ease; padding:0 20px; }
+    .faq-body p { padding-bottom:18px; font-size:0.87rem; color:var(--text-200); line-height:1.7; }
+
+    /* Payment modal extras */
+    .modal-credits-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:99px; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); color:var(--accent); font-size:0.8rem; font-weight:600; margin-bottom:16px; }
+
+    @media (max-width:900px) {
+      .plans-grid { grid-template-columns:1fr; max-width:420px; margin-left:auto; margin-right:auto; }
+      .how-strip  { grid-template-columns:1fr; max-width:320px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🎬</div>
+        AdVision AI
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="studio.html">Studio</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="testimonials.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" id="nav-auth-btn" class="btn btn-primary btn-sm">Sign In</a>
+        <div id="nav-user-menu" style="display:none; align-items:center; gap:10px;">
+          <!-- Credits badge in nav -->
+          <div id="nav-credits-badge" style="display:none; flex-direction:column; gap:3px; cursor:pointer; padding:4px 10px; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.25); border-radius:8px;"></div>
+          <a href="studio.html" class="btn btn-accent btn-sm">Studio</a>
+          <div class="nav-avatar" id="nav-avatar">U</div>
+          <a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Sign Out</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="container">
+      <!-- Hero -->
+      <div class="pricing-hero reveal">
+        <div class="section-label">⚡ Credits-Based Pricing</div>
+        <h1>Start Free — <span class="grad-text">100 Credits</span> on Us</h1>
+        <p>Every new account gets 100 free credits. Each video costs 10 credits. Buy more whenever you need them — no subscriptions, pay as you go.</p>
+      </div>
+
+      <!-- Credits widget (shown when logged in) -->
+      <div id="credits-widget" style="display:none;"></div>
+
+      <!-- How it works -->
+      <div class="how-strip reveal">
+        <div class="how-card">
+          <div class="how-num grad-text">100</div>
+          <div class="how-lbl">Free credits on signup</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num" style="color:var(--accent);">10</div>
+          <div class="how-lbl">Credits per video</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num" style="color:var(--success);">∞</div>
+          <div class="how-lbl">Buy more anytime</div>
+        </div>
+      </div>
+
+      <!-- Billing toggle -->
+      <div style="text-align:center;">
+        <div class="billing-toggle-wrap">
+          <span class="billing-label active" id="billing-monthly">Monthly</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="billing-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="billing-label" id="billing-yearly">Yearly <span class="save-badge">Save 34%</span></span>
+        </div>
+      </div>
+
+      <!-- Plans -->
+      <div class="plans-grid">
+        <!-- Free -->
+        <div class="plan-card glass reveal">
+          <div class="plan-icon">🆓</div>
+          <div class="plan-name">Starter</div>
+          <div class="plan-credits">150 credits (+50 bonus)</div>
+          <div class="plan-price grad-text">
+            <span>₹</span><span id="price-starter">199</span>
+          </div>
+          <div class="plan-period" id="period-starter">/month</div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> 150 credits = 15 videos</li>
+            <li><span class="check">✓</span> 3D AI Presenter</li>
+            <li><span class="check">✓</span> Standard HD output</li>
+            <li><span class="check">✓</span> Male & Female characters</li>
+            <li><span class="check">✓</span> Email support</li>
+            <li class="muted"><span class="check">—</span> No team features</li>
+          </ul>
+          <button class="btn btn-secondary w-full" data-plan="starter" id="btn-starter">
+            Buy Starter ⚡
+          </button>
+        </div>
+
+        <!-- Pro (featured) -->
+        <div class="plan-card glass reveal anim-delay-1 featured">
+          <div class="plan-badge">⭐ Best Value</div>
+          <div class="plan-icon">🚀</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-credits">500 credits (+100 bonus)</div>
+          <div class="plan-price">
+            <span>₹</span><span id="price-pro">499</span>
+          </div>
+          <div class="plan-period" id="period-pro">/month</div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> 500 credits = 50 videos</li>
+            <li><span class="check">✓</span> 3D AI Presenter (HD)</li>
+            <li><span class="check">✓</span> Priority rendering</li>
+            <li><span class="check">✓</span> All character styles</li>
+            <li><span class="check">✓</span> Priority support</li>
+            <li><span class="check">✓</span> Credits roll over</li>
+          </ul>
+          <button class="btn btn-primary w-full" data-plan="pro" id="btn-pro">
+            Upgrade to Pro ✨
+          </button>
+        </div>
+
+        <!-- Business -->
+        <div class="plan-card glass reveal anim-delay-2">
+          <div class="plan-icon">🏢</div>
+          <div class="plan-name">Business</div>
+          <div class="plan-credits">2000 credits (~200 videos)</div>
+          <div class="plan-price">
+            <span>₹</span><span id="price-business">999</span>
+          </div>
+          <div class="plan-period" id="period-business">/month</div>
+          <div class="plan-divider"></div>
+          <ul class="plan-features">
+            <li><span class="check">✓</span> 2000 credits = 200 videos</li>
+            <li><span class="check">✓</span> Everything in Pro</li>
+            <li><span class="check">✓</span> Team collaboration</li>
+            <li><span class="check">✓</span> White-label option</li>
+            <li><span class="check">✓</span> Dedicated support</li>
+            <li><span class="check">✓</span> Bulk generation</li>
+          </ul>
+          <button class="btn btn-secondary w-full" data-plan="business" id="btn-business">
+            Get Business 🏢
+          </button>
+        </div>
+      </div>
+
+      <!-- Free signup CTA -->
+      <div style="text-align:center;margin-top:36px;padding:28px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-xl);" class="reveal">
+        <div style="font-size:2rem;margin-bottom:12px;">🎁</div>
+        <h3 style="margin-bottom:8px;">Don't have an account? Start completely free!</h3>
+        <p style="color:var(--text-300);margin-bottom:20px;">Sign up in 30 seconds and get <strong style="color:var(--success);">100 credits</strong> instantly — no credit card required.</p>
+        <a href="auth.html?tab=signup" id="btn-free-cta" class="btn btn-primary btn-lg">Create Free Account 🚀</a>
+      </div>
+
+      <!-- FAQ -->
+      <div class="section reveal">
+        <div class="section-header">
+          <div class="section-label">❓ FAQ</div>
+          <h2>Common <span class="grad-text">Questions</span></h2>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <button class="faq-trigger">How many videos can I make with 100 free credits? <span class="faq-icon">+</span></button>
+            <div class="faq-body"><p>Each video costs 10 credits, so your 100 free credits let you create <strong>10 full advertisement videos</strong> — completely free, no credit card needed!</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">Do credits expire? <span class="faq-icon">+</span></button>
+            <div class="faq-body"><p>Free credits don't expire. Purchased credits roll over month to month on Pro and Business plans. Use them whenever you need!</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">What payment methods are accepted? <span class="faq-icon">+</span></button>
+            <div class="faq-body"><p>We accept all major credit/debit cards (Visa, Mastercard, Amex, Rupay), UPI, net banking, and wallets. All payments are 100% secured.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">What happens when I run out of credits? <span class="faq-icon">+</span></button>
+            <div class="faq-body"><p>You'll be redirected to this page to buy more credits. Your account and all previously generated videos are kept safe. Buy credits in any amount anytime.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">Can I use the videos commercially? <span class="faq-icon">+</span></button>
+            <div class="faq-body"><p>Yes! All videos generated with AdVision AI are 100% yours to use commercially — social media ads, product pages, YouTube, Instagram, TikTok, and more.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Payment Modal ─────────────────────────────────── -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal" style="max-width:480px;">
+      <button class="modal-close" data-modal-close="payment-modal">✕</button>
+      <h3 style="margin-bottom:4px;">Complete Your Purchase</h3>
+      <div class="modal-credits-badge" id="modal-credits-note">+ credits added to your account</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:16px;">
+        <span id="modal-plan-name" style="font-size:0.9rem;color:var(--text-300);">Pro Plan</span>
+        <span style="font-size:1.8rem;font-weight:800;font-family:'Outfit',sans-serif;color:var(--primary-light);" id="modal-plan-price">₹499</span>
+        <span id="modal-plan-cycle" style="font-size:0.8rem;color:var(--text-400);">per month</span>
+      </div>
+      <ul id="modal-plan-features" style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:20px;font-size:0.83rem;color:var(--text-200);padding:12px 16px;background:rgba(124,58,237,0.07);border-radius:var(--radius-md);border:1px solid rgba(124,58,237,0.15);"></ul>
+
+      <form id="payment-form">
+        <div class="form-group">
+          <label class="form-label">Cardholder Name</label>
+          <input class="form-input" type="text" id="card-name" placeholder="Your Name" autocomplete="cc-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Card Number</label>
+          <input class="form-input" type="text" id="card-number" placeholder="1234 5678 9012 3456" autocomplete="cc-number" inputmode="numeric" maxlength="19">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label class="form-label">Expiry (MM/YY)</label>
+            <input class="form-input" type="text" id="card-expiry" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input class="form-input" type="text" id="card-cvv" placeholder="•••" autocomplete="cc-csc" inputmode="numeric" maxlength="4">
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 0 16px;font-size:0.78rem;color:var(--text-400);">
+          <span>🔒</span> Secured by 256-bit SSL encryption
+        </div>
+        <!-- Demo notice -->
+        <div style="background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.2);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.76rem;color:var(--text-300);">
+          💳 <strong>Demo Mode:</strong> Use any card details (e.g. 4242 4242 4242 4242, 12/28, 123). Credits are added instantly.
+        </div>
+        <button type="submit" id="pay-submit-btn" class="btn btn-primary w-full btn-lg">
+          Complete Payment 🔒
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Success Modal ─────────────────────────────────── -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal" style="max-width:420px;text-align:center;">
+      <div style="font-size:4rem;margin-bottom:16px;">🎉</div>
+      <h3 style="margin-bottom:10px;">Payment Successful!</h3>
+      <p style="font-size:0.9rem;margin-bottom:8px;">
+        <strong><span id="success-credits"></span> credits</strong> added to your account.
+      </p>
+      <p style="font-size:0.82rem;color:var(--text-400);margin-bottom:8px;">Plan: <span id="success-plan"></span></p>
+      <p style="font-size:0.82rem;color:var(--text-400);margin-bottom:28px;">Amount paid: <span id="success-total"></span></p>
+      <a href="studio.html" class="btn btn-primary btn-lg w-full">Start Creating Videos →</a>
+      <button class="btn btn-ghost w-full" style="margin-top:10px;" data-modal-close="success-modal">Close</button>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/main.js"></script>
+  <script src="js/pricing.js"></script>
+</body>
+</html>

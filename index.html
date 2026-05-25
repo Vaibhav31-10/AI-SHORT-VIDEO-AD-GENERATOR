@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AdVision AI — Turn your product images into stunning advertisement videos in seconds. Powered by AI.">
+  <title>AdVision AI — Product Image to Ad Video Generator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Hero ─────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 0 80px;
+    }
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.35);
+      color: var(--primary-light);
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge span { color: var(--accent); }
+    .hero h1 { margin-bottom: 24px; animation: fadeUp 0.6s ease 0.1s both; }
+    .hero p.hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-200);
+      max-width: 580px;
+      line-height: 1.75;
+      margin-bottom: 40px;
+      animation: fadeUp 0.6s ease 0.2s both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s ease 0.3s both;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp 0.6s ease 0.4s both;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .stat-label { font-size: 0.82rem; color: var(--text-400); }
+
+    /* ── Hero Demo Card ───────────────────────────────────── */
+    .hero-visual {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 480px;
+      animation: float 5s ease-in-out infinite, fadeIn 0.8s ease 0.3s both;
+      z-index: 2;
+    }
+    .demo-card {
+      background: rgba(14,19,32,0.85);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(124,58,237,0.15);
+      backdrop-filter: blur(20px);
+    }
+    .demo-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .demo-dot.red    { background: #ef4444; }
+    .demo-dot.yellow { background: #f59e0b; }
+    .demo-dot.green  { background: #10b981; }
+    .demo-screen {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1a0a2e, #0d1b2e);
+      position: relative;
+      overflow: hidden;
+    }
+    .demo-screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.6;
+      animation: kenBurns 8s ease-in-out alternate infinite;
+    }
+    .demo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,0.4), rgba(6,182,212,0.2));
+    }
+    .demo-text {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+    }
+    .demo-text h3 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+    .demo-text p  { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+    .demo-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 56px; height: 56px;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .demo-play:hover { background: rgba(124,58,237,0.5); transform: translate(-50%,-50%) scale(1.1); }
+    .demo-footer {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .demo-progress {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .demo-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 65%;
+      border-radius: 2px;
+      animation: shimmer 2s infinite;
+      background-size: 200% 100%;
+    }
+
+    /* ── Features ─────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      padding: 32px;
+    }
+    .feature-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 { margin-bottom: 10px; font-size: 1.05rem; }
+    .feature-card p  { font-size: 0.88rem; line-height: 1.7; }
+
+    /* ── How It Works ─────────────────────────────────────── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    .how-grid::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(12.5%);
+      right: calc(12.5%);
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      z-index: 0;
+    }
+    .how-step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .how-num {
+      width: 72px; height: 72px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 0 8px rgba(124,58,237,0.15);
+    }
+    .how-step h4 { margin-bottom: 8px; }
+    .how-step p  { font-size: 0.85rem; }
+
+    /* ── CTA Banner ───────────────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.1));
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: var(--radius-xl);
+      padding: 70px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(124,58,237,0.15) 0%, transparent 70%);
+    }
+    .cta-banner h2, .cta-banner p, .cta-banner div { position: relative; z-index: 1; }
+    .cta-banner p { margin: 16px 0 36px; font-size: 1.05rem; }
+
+    /* ── Marquee / Logos ──────────────────────────────────── */
+    .marquee-wrapper { overflow: hidden; position: relative; }
+    .marquee-wrapper::before,
+    .marquee-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 2;
+    }
+    .marquee-wrapper::before { left: 0;  background: linear-gradient(90deg, var(--bg-deep), transparent); }
+    .marquee-wrapper::after  { right: 0; background: linear-gradient(-90deg, var(--bg-deep), transparent); }
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      animation: marquee 25s linear infinite;
+      width: max-content;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .logo-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 10px 24px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-300);
+      white-space: nowrap;
+    }
+    .logo-pill span { font-size: 1.2rem; }
+
+    @media (max-width: 1100px) {
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .how-grid { grid-template-columns: 1fr 1fr; }
+      .how-grid::before { display: none; }
+    }
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
+      .cta-banner { padding: 48px 24px; }
+      .hero-stats { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ── Navigation ─────────────────────────────────────── -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🎬</div>
+        AdVision AI
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="studio.html">Studio</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="testimonials.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" id="nav-auth-btn" class="btn btn-primary btn-sm">Sign In</a>
+        <div id="nav-user-menu" style="display:none; align-items:center; gap:10px;">
+          <a href="studio.html" class="btn btn-accent btn-sm">Open Studio</a>
+          <div class="nav-avatar" id="nav-avatar">U</div>
+          <a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Sign Out</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────── -->
+  <section class="hero">
+    <canvas class="hero-canvas" id="hero-canvas"></canvas>
+    <div class="container" style="position:relative;z-index:2;width:100%;">
+      <div class="hero-content">
+        <div class="hero-badge">✨ Powered by <span>AI</span> — No video editing skills needed</div>
+        <h1>Turn Product Photos Into<br><span class="grad-text">Stunning Ad Videos</span></h1>
+        <p class="hero-sub">
+          Upload your product images, fill in the details, and let AdVision AI craft a professional advertisement video in seconds — ready to share on social media, websites, and more.
+        </p>
+        <div class="hero-actions">
+          <a href="studio.html" class="btn btn-primary btn-lg" id="hero-cta-btn">
+            🎬 Create Your Ad — It's Free
+          </a>
+          <a href="#how-it-works" class="btn btn-secondary btn-lg">See How It Works</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-num grad-text">50K+</span>
+            <span class="stat-label">Videos Created</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num grad-text">12K+</span>
+            <span class="stat-label">Happy Creators</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num grad-text">4.9 ⭐</span>
+            <span class="stat-label">Average Rating</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num grad-text">&lt;30s</span>
+            <span class="stat-label">Generation Time</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo Card -->
+    <div class="hero-visual">
+      <div class="demo-card">
+        <div class="demo-header">
+          <div class="demo-dot red"></div>
+          <div class="demo-dot yellow"></div>
+          <div class="demo-dot green"></div>
+          <span style="margin-left:8px; font-size:0.75rem; color:var(--text-400);">AdVision Studio</span>
+        </div>
+        <div class="demo-screen">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e0a4a,#0a2040,#0f4a3a);display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;padding:20px;">
+              <div style="font-size:4rem;margin-bottom:16px;">🛍️</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Premium Sneakers</div>
+              <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);margin-top:6px;">Step Into the Future</div>
+            </div>
+          </div>
+          <div class="demo-overlay" style="background:linear-gradient(transparent 40%, rgba(0,0,0,0.7))"></div>
+          <div class="demo-text">
+            <h3>Premium Sneakers</h3>
+            <p>Step Into the Future</p>
+          </div>
+          <div class="demo-play">▶</div>
+          <div style="position:absolute;top:16px;right:16px;background:var(--primary);color:#fff;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:99px;font-family:'Outfit',sans-serif;">LIVE</div>
+        </div>
+        <div class="demo-footer">
+          <span style="font-size:0.75rem;color:var(--text-400);">0:05</span>
+          <div class="demo-progress"><div class="demo-progress-fill"></div></div>
+          <span style="font-size:0.75rem;color:var(--text-400);">0:15</span>
+          <span style="font-size:18px;cursor:pointer;">⬇️</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Brand logos ─────────────────────────────────────── -->
+  <div class="section-sm" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border); position:relative;z-index:1;">
+    <div class="container">
+      <p class="text-center" style="font-size:0.8rem;color:var(--text-400);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;">Trusted by creators at</p>
+      <div class="marquee-wrapper">
+        <div class="marquee-track">
+          <div class="logo-pill"><span>🛍️</span> Shopify Stores</div>
+          <div class="logo-pill"><span>📱</span> Instagram Brands</div>
+          <div class="logo-pill"><span>🎯</span> Facebook Ads</div>
+          <div class="logo-pill"><span>🛒</span> Amazon Sellers</div>
+          <div class="logo-pill"><span>🏪</span> Etsy Shops</div>
+          <div class="logo-pill"><span>📺</span> YouTube Channels</div>
+          <div class="logo-pill"><span>💼</span> Startups</div>
+          <div class="logo-pill"><span>🎨</span> Creative Agencies</div>
+          <!-- Duplicate for seamless loop -->
+          <div class="logo-pill"><span>🛍️</span> Shopify Stores</div>
+          <div class="logo-pill"><span>📱</span> Instagram Brands</div>
+          <div class="logo-pill"><span>🎯</span> Facebook Ads</div>
+          <div class="logo-pill"><span>🛒</span> Amazon Sellers</div>
+          <div class="logo-pill"><span>🏪</span> Etsy Shops</div>
+          <div class="logo-pill"><span>📺</span> YouTube Channels</div>
+          <div class="logo-pill"><span>💼</span> Startups</div>
+          <div class="logo-pill"><span>🎨</span> Creative Agencies</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Features ───────────────────────────────────────── -->
+  <section class="section" id="features" style="position:relative;z-index:1;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">⚡ Features</div>
+        <h2>Everything You Need to <span class="grad-text">Sell More</span></h2>
+        <p>From upload to export — AdVision AI handles every step of ad creation.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card glass glass-hover reveal">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(124,58,237,0.25),rgba(124,58,237,0.1))">🤖</div>
+          <h3>AI-Powered Generation</h3>
+          <p>Our AI analyzes your product and auto-generates professional ad videos with the right tone, transitions, and music — no editing skills needed.</p>
+        </div>
+        <div class="feature-card glass glass-hover reveal anim-delay-1">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(6,182,212,0.25),rgba(6,182,212,0.1))">🎨</div>
+          <h3>Brand Customization</h3>
+          <p>Match your brand colors, tone of voice, and style. From luxury to playful — the AI adapts to make every ad feel uniquely yours.</p>
+        </div>
+        <div class="feature-card glass glass-hover reveal anim-delay-2">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(236,72,153,0.25),rgba(236,72,153,0.1))">🎵</div>
+          <h3>Royalty-Free Music</h3>
+          <p>Choose from a curated library of royalty-free background tracks that perfectly match your product's vibe.</p>
+        </div>
+        <div class="feature-card glass glass-hover reveal">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(245,158,11,0.1))">📱</div>
+          <h3>Multi-Format Export</h3>
+          <p>Export in 16:9, 9:16 (vertical), or 1:1 formats. Perfect for YouTube, Instagram, TikTok, Facebook Ads, and more.</p>
+        </div>
+        <div class="feature-card glass glass-hover reveal anim-delay-1">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(16,185,129,0.25),rgba(16,185,129,0.1))">⚡</div>
+          <h3>Lightning Fast</h3>
+          <p>Generate professional advertisement videos in under 30 seconds. No waiting hours for renders or complicated workflows.</p>
+        </div>
+        <div class="feature-card glass glass-hover reveal anim-delay-2">
+          <div class="feature-icon" style="background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(99,102,241,0.1))">📊</div>
+          <h3>Multi-Image Support</h3>
+          <p>Upload up to 6 product images and AdVision creates a dynamic slideshow ad with smooth transitions between each shot.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How It Works ────────────────────────────────────── -->
+  <section class="section" id="how-it-works" style="background:rgba(0,0,0,0.2);position:relative;z-index:1;">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">🗺️ Process</div>
+        <h2>How It <span class="grad-text">Works</span></h2>
+        <p>Four simple steps from product image to professional advertisement.</p>
+      </div>
+      <div class="how-grid">
+        <div class="how-step reveal">
+          <div class="how-num">1</div>
+          <h4>Upload Images</h4>
+          <p>Drag & drop your product photos (JPG, PNG, WebP supported)</p>
+        </div>
+        <div class="how-step reveal anim-delay-1">
+          <div class="how-num" style="background:linear-gradient(135deg,var(--accent),#0891b2)">2</div>
+          <h4>Fill Details</h4>
+          <p>Enter product name, tagline, description, and brand preferences</p>
+        </div>
+        <div class="how-step reveal anim-delay-2">
+          <div class="how-num" style="background:linear-gradient(135deg,var(--pink),#db2777)">3</div>
+          <h4>Generate Video</h4>
+          <p>Hit Generate — our AI crafts your professional ad video</p>
+        </div>
+        <div class="how-step reveal anim-delay-3">
+          <div class="how-num" style="background:linear-gradient(135deg,var(--gold),#d97706)">4</div>
+          <h4>Download & Share</h4>
+          <p>Download your MP4 video and share across all platforms</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ────────────────────────────────────────────── -->
+  <section class="section" style="position:relative;z-index:1;">
+    <div class="container">
+      <div class="cta-banner reveal">
+        <h2>Ready to <span class="grad-text">Create Your First Ad?</span></h2>
+        <p>Join 12,000+ creators already using AdVision AI. Start free today.</p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+          <a href="auth.html" class="btn btn-primary btn-lg">Get Started Free 🚀</a>
+          <a href="pricing.html" class="btn btn-secondary btn-lg">View Pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo" style="margin-bottom:0;">
+            <div class="nav-logo-icon">🎬</div>
+            AdVision AI
+          </a>
+          <p>Turn product images into professional advertisement videos with the power of AI. No editing skills required.</p>
+          <div class="social-links">
+            <a class="social-link" title="Twitter">𝕏</a>
+            <a class="social-link" title="Instagram">📸</a>
+            <a class="social-link" title="LinkedIn">in</a>
+            <a class="social-link" title="YouTube">▶</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="studio.html">Studio</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+            <li><a href="#">Templates</a></li>
+            <li><a href="#">API Access</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="testimonials.html">Reviews</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 AdVision AI. All rights reserved.</p>
+        <p style="display:flex;align-items:center;gap:6px;">Made with ❤️ for creators everywhere</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initParticles('hero-canvas');
+    });
+  </script>
+</body>
+</html>

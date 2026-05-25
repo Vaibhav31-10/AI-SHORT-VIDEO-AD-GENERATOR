@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AdVision AI Studio — Upload your product images, customize your ad, and generate a professional advertisement video.">
+  <title>Studio — AdVision AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/studio.css">
+  <style>
+    .studio-header { padding: 40px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+    .studio-header h1 { font-size: 2rem; margin-bottom: 6px; }
+    .studio-header p  { font-size: 0.9rem; color: var(--text-300); }
+    .api-key-bar { display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap; }
+    .tone-option { position: relative; }
+    .tone-option input[type="radio"] { position:absolute; opacity:0; }
+    .tone-option label { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:1px solid var(--border); border-radius:var(--radius-full); cursor:pointer; font-size:0.82rem; font-weight:500; color:var(--text-300); transition:var(--transition); }
+    .tone-option input:checked + label { border-color:var(--primary); background:rgba(124,58,237,0.12); color:var(--primary-light); }
+    .tone-option label:hover { border-color:var(--border-hov); color:var(--text-100); }
+    .tone-grid { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+    input[type="range"] { width:100%; accent-color:var(--primary); cursor:pointer; margin:8px 0; }
+    .range-row { display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-400); }
+    /* Mode toggle */
+    .mode-toggle { display:flex; gap:0; border:1px solid var(--border); border-radius:var(--radius-md); overflow:hidden; margin-bottom:20px; }
+    .mode-btn { flex:1; padding:12px 16px; background:transparent; border:none; color:var(--text-300); font-size:0.88rem; font-weight:600; cursor:pointer; transition:var(--transition); display:flex; align-items:center; justify-content:center; gap:8px; }
+    .mode-btn:first-child { border-right:1px solid var(--border); }
+    .mode-btn.active { background:var(--primary); color:#fff; }
+    .mode-btn:hover:not(.active) { background:rgba(255,255,255,0.04); color:var(--text-100); }
+    /* Gender buttons */
+    .gender-btn { transition: all 0.2s ease; }
+    .gender-btn.active { background:rgba(124,58,237,0.18) !important; color:var(--primary-light) !important; border-color:var(--primary) !important; }
+    .gender-btn:hover:not(.active) { background:rgba(255,255,255,0.06) !important; color:var(--text-100) !important; border-color:var(--border-hov) !important; }
+    /* Presenter panel */
+    .presenter-script { width:100%; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); color:var(--text-100); padding:14px; font-size:0.86rem; line-height:1.6; resize:vertical; min-height:130px; font-family:inherit; }
+    .presenter-script:focus { outline:none; border-color:var(--primary); }
+    .avatar-preview-badge { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:var(--radius-full); font-size:0.78rem; font-weight:600; background:rgba(124,58,237,0.15); color:var(--primary-light); border:1px solid rgba(124,58,237,0.3); margin-top:10px; }
+    .did-info { background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md); padding:14px; font-size:0.82rem; color:var(--text-200); margin-top:14px; }
+  </style>
+
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🎬</div>
+        AdVision AI
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="studio.html">Studio</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="testimonials.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" id="nav-auth-btn" class="btn btn-primary btn-sm">Sign In</a>
+        <div id="nav-user-menu" style="display:none; align-items:center; gap:10px;">
+          <!-- Live credits counter in nav -->
+          <div id="nav-credits-badge" style="display:none; flex-direction:column; gap:3px; cursor:pointer; padding:4px 10px; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.25); border-radius:8px;" title="Click to buy more credits"></div>
+          <div class="nav-avatar" id="nav-avatar">U</div>
+          <a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Sign Out</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="container">
+      <!-- Studio Header -->
+      <div class="studio-header">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+            <div>
+              <h1>🎬 Ad Creator <span class="grad-text">Studio</span></h1>
+              <p>Upload product images → fill in details → generate a real downloadable HD advertisement video</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span class="badge badge-success" style="align-self:center;">✅ Browser Engine Active</span>
+            </div>
+          </div>
+        <div class="api-key-bar">
+          <span id="api-key-status" class="badge badge-primary">🟡 Loading...</span>
+          <span class="badge badge-accent">✨ CSS Preview always available</span>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="steps" id="steps-indicator">
+        <div class="step active" data-step="1">
+          <div class="step-circle">1</div>
+          <div class="step-label">Upload Images</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-circle">2</div>
+          <div class="step-label">Product Details</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-circle">3</div>
+          <div class="step-label">Generate Video</div>
+        </div>
+      </div>
+
+      <!-- ── Step 1: Upload ─────────────────────────────── -->
+      <div class="studio-step" data-step="1">
+        <div class="studio-layout">
+          <!-- Left: Upload -->
+          <div>
+            <div class="upload-zone" id="upload-zone">
+              <div class="upload-icon">📸</div>
+              <h3>Drop your product images here</h3>
+              <p>or click to browse files — up to 6 images, 10MB each</p>
+              <div class="upload-formats">
+                <span class="badge badge-primary">JPG</span>
+                <span class="badge badge-primary">PNG</span>
+                <span class="badge badge-primary">WebP</span>
+                <span class="badge badge-primary">GIF</span>
+              </div>
+              <input type="file" id="file-input" accept="image/*" multiple style="display:none">
+            </div>
+
+            <!-- Preview grid -->
+            <div id="preview-grid-section" style="display:none; margin-top:24px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <h4 style="font-size:0.95rem;">Uploaded Images (<span id="img-count">0</span>/6)</h4>
+                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('file-input').click()">+ Add More</button>
+              </div>
+              <div class="image-preview-grid" id="image-preview-grid"></div>
+            </div>
+          </div>
+
+          <!-- Right: Tips panel -->
+          <div class="form-panel">
+            <h3>📋 Upload Tips</h3>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="font-size:1.3rem;flex-shrink:0;">🖼️</div>
+                <div><strong style="font-size:0.88rem;display:block;margin-bottom:4px;">Use High-Quality Images</strong><p style="font-size:0.82rem;">1080×1080px or larger for best results</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="font-size:1.3rem;flex-shrink:0;">☀️</div>
+                <div><strong style="font-size:0.88rem;display:block;margin-bottom:4px;">Good Lighting</strong><p style="font-size:0.82rem;">Well-lit product shots produce more professional ads</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="font-size:1.3rem;flex-shrink:0;">🔲</div>
+                <div><strong style="font-size:0.88rem;display:block;margin-bottom:4px;">Clean Background</strong><p style="font-size:0.82rem;">White or neutral backgrounds work best</p></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="font-size:1.3rem;flex-shrink:0;">📐</div>
+                <div><strong style="font-size:0.88rem;display:block;margin-bottom:4px;">Multiple Angles</strong><p style="font-size:0.82rem;">Upload 3–6 images from different angles for dynamic ads</p></div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <button id="upload-next-btn" class="btn btn-primary w-full" disabled>
+              Continue to Details →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 2: Product Details ────────────────────── -->
+      <div class="studio-step" data-step="2" style="display:none;">
+        <div class="studio-layout">
+          <!-- Left: Form -->
+          <div>
+            <div class="glass" style="padding:32px;border-radius:var(--radius-xl);">
+              <h3 style="margin-bottom:24px;">📝 Product Information</h3>
+              <form id="product-form">
+                <div class="form-group">
+                  <label class="form-label" for="product-name">Product Name *</label>
+                  <input class="form-input" type="text" id="product-name" placeholder="e.g. Premium Running Sneakers" maxlength="60">
+                  <span class="form-error">Product name is required</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="product-tagline">Tagline / Slogan</label>
+                  <input class="form-input" type="text" id="product-tagline" placeholder="e.g. Run Faster. Feel Lighter. Live Better." maxlength="80">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="product-desc">Product Description</label>
+                  <textarea class="form-textarea" id="product-desc" placeholder="Describe your product's key features and benefits..." rows="4" maxlength="300"></textarea>
+                  <span class="form-hint">This helps the AI understand your product better</span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Brand Color</label>
+                  <div class="color-picker-group">
+                    <input class="form-input" type="text" id="brand-color" value="#7c3aed" placeholder="#7c3aed">
+                    <div class="color-swatch" id="color-swatch" style="background:#7c3aed;"></div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Ad Tone / Style</label>
+                  <div class="tone-grid">
+                    <div class="tone-option">
+                      <input type="radio" name="product-tone" id="tone-pro" value="professional" checked>
+                      <label for="tone-pro">💼 Professional</label>
+                    </div>
+                    <div class="tone-option">
+                      <input type="radio" name="product-tone" id="tone-ener" value="energetic">
+                      <label for="tone-ener">⚡ Energetic</label>
+                    </div>
+                    <div class="tone-option">
+                      <input type="radio" name="product-tone" id="tone-lux" value="luxury">
+                      <label for="tone-lux">♛ Luxury</label>
+                    </div>
+                    <div class="tone-option">
+                      <input type="radio" name="product-tone" id="tone-play" value="playful">
+                      <label for="tone-play">🎉 Playful</label>
+                    </div>
+                    <div class="tone-option">
+                      <input type="radio" name="product-tone" id="tone-min" value="minimalist">
+                      <label for="tone-min">⬜ Minimalist</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Animation Style</label>
+                  <div class="style-grid">
+                    <div class="style-option">
+                      <input type="radio" name="anim-style" id="style-zoom" value="zoom" checked>
+                      <label for="style-zoom"><span class="style-icon">🔍</span>Zoom In</label>
+                    </div>
+                    <div class="style-option">
+                      <input type="radio" name="anim-style" id="style-slide" value="slide">
+                      <label for="style-slide"><span class="style-icon">↔️</span>Slide</label>
+                    </div>
+                    <div class="style-option">
+                      <input type="radio" name="anim-style" id="style-fade" value="fade">
+                      <label for="style-fade"><span class="style-icon">🌫️</span>Fade</label>
+                    </div>
+                    <div class="style-option">
+                      <input type="radio" name="anim-style" id="style-pulse" value="pulse">
+                      <label for="style-pulse"><span class="style-icon">💫</span>Pulse</label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: Live Preview -->
+          <div class="form-panel">
+            <h3>👁️ Live Preview</h3>
+            <div class="video-canvas-wrapper">
+              <div class="preview-mockup" id="preview-mockup">
+                <div id="preview-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-400);font-size:0.85rem;gap:8px;width:100%;height:100%;">
+                  <span style="font-size:2.5rem;">🎬</span>
+                  Upload images to see preview
+                </div>
+                <img class="preview-bg" id="preview-bg" src="" alt="Preview" style="display:none;transition:opacity 0.4s ease;">
+                <div class="preview-mockup-overlay"></div>
+                <div class="preview-mockup-text">
+                  <h2 id="preview-product-name">Your Product Name</h2>
+                  <p id="preview-tagline">Your tagline goes here</p>
+                </div>
+                <div class="preview-mockup-badge" id="preview-badge">✨ Premium Quality</div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div style="display:flex;gap:10px;">
+              <button id="form-back-btn" class="btn btn-ghost" style="flex:1">← Back</button>
+              <button id="form-next-btn" class="btn btn-primary" style="flex:2">Generate Ad →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 3: Generate ───────────────────────────── -->
+      <div class="studio-step" data-step="3" style="display:none;">
+        <div class="studio-layout">
+          <!-- Left: Generate + Result -->
+          <div>
+            <!-- Generate panel -->
+            <div class="glass" style="padding:32px;border-radius:var(--radius-xl);margin-bottom:24px;">
+              <h3 style="margin-bottom:16px;">🚀 Generate Your Ad Video</h3>
+
+              <!-- Mode toggle -->
+              <div class="mode-toggle">
+                <button class="mode-btn active" data-mode="standard">🎬 Standard Ad Video</button>
+                <button class="mode-btn" data-mode="presenter">🤖 AI Presenter</button>
+              </div>
+
+              <!-- Standard mode info -->
+              <div id="std-panel">
+                <p style="font-size:0.86rem;color:var(--text-300);margin-bottom:16px;">Your product images play as a cinematic HD advertisement with animations, text overlays, and your brand color.</p>
+              </div>
+
+              <!-- AI Presenter panel -->
+              <div id="pres-panel" style="display:none;">
+                <p style="font-size:0.86rem;color:var(--text-300);margin-bottom:14px;">A <strong>full-body 3D animated character</strong> stands in the center and speaks your product details while your product images orbit around them in stunning 3D.</p>
+
+                <!-- Gender selector -->
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label class="form-label">👤 Character Gender</label>
+                  <div style="display:flex;gap:10px;margin-top:6px;">
+                    <button class="gender-btn active" data-gender="female" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-md);background:rgba(124,58,237,0.15);color:var(--primary-light);font-weight:600;cursor:pointer;border-color:var(--primary);">👩 Female Presenter</button>
+                    <button class="gender-btn" data-gender="male" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-md);background:transparent;color:var(--text-300);font-weight:600;cursor:pointer;">👨 Male Presenter</button>
+                  </div>
+                </div>
+
+                <!-- 3D Features badge -->
+                <div class="avatar-preview-badge" style="margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+                  <span>🤖 3D Scene:</span>
+                  <span>Full Body · Suit/Outfit · 4 Hand Gestures · Lip Sync · Eye Blink · Products Orbit in 3D · Studio Floor · Rim Lighting</span>
+                </div>
+
+                <!-- Script -->
+                <div class="form-group">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <label class="form-label" style="margin:0;">🎙️ AI Voice Script</label>
+                    <div style="display:flex;gap:6px;">
+                      <button id="preview-voice-btn" class="btn btn-ghost btn-sm">🔊 Preview Voice</button>
+                      <button id="reset-script" class="btn btn-ghost btn-sm">↺ Auto-fill</button>
+                    </div>
+                  </div>
+                  <textarea id="presenter-script" class="presenter-script" placeholder="Script is auto-generated from your product details. Edit here to customize what the AI says."></textarea>
+                  <span class="form-hint">~130 words/min · Keep under 100 words for a 45-second video · The character's mouth syncs to every word</span>
+                </div>
+
+                <div class="did-info" style="margin-top:14px;background:rgba(16,185,129,0.06);border-color:rgba(16,185,129,0.2);">
+                  <strong>✅ Fully Offline — No API Key Needed</strong><br>
+                  The 3D AI Presenter runs <strong>100% in your browser</strong> using Canvas + SpeechSynthesis. No sign-ups, no API keys, no network required. Just click Generate!
+                </div>
+              </div>
+
+              <div class="api-notice" id="api-notice" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.3);margin-top:18px;">
+                <span class="notice-icon">✅</span>
+                <p><strong>3D AI Presenter is ready!</strong> Full-body animated character with hand gestures · Products orbiting in 3D · AI voice narration.<br>
+                <span style="font-size:0.78rem;color:var(--text-400);margin-top:4px;display:block;">Use Chrome or Edge · No API key required · Works offline</span></p>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+                <button id="generate-back-btn" class="btn btn-ghost">← Back</button>
+                <button id="generate-btn" class="btn btn-primary btn-lg" style="flex:1;min-width:200px;">
+                  🎬 Generate Real HD Video
+                </button>
+              </div>
+            </div>
+
+            <!-- Progress section -->
+            <div id="progress-section" style="display:none;" class="glass" style2="padding:28px;border-radius:var(--radius-xl);">
+              <div style="padding:28px;">
+                <h4 style="margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+                  <span style="animation:spin 1s linear infinite;display:inline-block">⚙️</span>
+                  Rendering Your Advertisement...
+                </h4>
+                <div class="progress-bar-wrapper">
+                  <div class="progress-bar-label">
+                    <span id="progress-msg">Initializing...</span>
+                    <span id="progress-pct">0%</span>
+                  </div>
+                  <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                  </div>
+                </div>
+                <p style="font-size:0.8rem;color:var(--text-400);margin-top:12px;">This usually takes 15–60 seconds. Please don't close the tab.</p>
+              </div>
+            </div>
+
+            <!-- CSS Preview Result -->
+            <div id="preview-section" style="display:none;" class="preview-area">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+                <h3>🎬 Your Ad Preview</h3>
+                <span class="badge badge-accent">CSS Animated Preview</span>
+              </div>
+              <div class="video-canvas-wrapper" style="max-width:100%;">
+                <div class="preview-mockup">
+                  <img class="preview-bg" id="result-preview-bg" src="" alt="Preview" style="transition:opacity 0.4s ease;">
+                  <div class="preview-mockup-overlay"></div>
+                  <div class="preview-mockup-text">
+                    <h2 id="result-product-name" style="font-size:1.5rem;"></h2>
+                    <p id="result-tagline"></p>
+                  </div>
+                  <div class="preview-mockup-badge" id="result-badge">✨ Premium Quality</div>
+                </div>
+              </div>
+              <div class="video-controls">
+                <a href="https://shotstack.io" target="_blank" class="btn btn-primary">
+                  🎬 Get Real MP4 (Shotstack API)
+                </a>
+                <button id="share-preview-btn" class="btn btn-secondary">🔗 Share Preview</button>
+                <button class="btn btn-ghost" onclick="location.reload()">🔄 Create Another</button>
+              </div>
+              <p style="font-size:0.78rem;color:var(--text-400);margin-top:12px;">
+                💡 Add your free <a href="https://shotstack.io" target="_blank" style="color:var(--primary-light);">Shotstack API key</a> in Settings to download a real MP4 video.
+              </p>
+            </div>
+
+            <!-- Real Video Result -->
+            <div id="video-result-section" style="display:none;" class="preview-area">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+                <h3>🎉 Your Video is Ready!</h3>
+                <span class="badge badge-success" id="video-format-badge">HD 1280×720</span>
+              </div>
+              <div class="video-canvas-wrapper">
+                <video id="result-video" controls style="width:100%;height:100%;object-fit:contain;background:#000;"></video>
+              </div>
+              <div class="video-controls">
+                <a id="download-video-btn" href="#" download="advertisement.webm" class="btn btn-primary btn-lg">
+                  ⬇️ Download Video
+                </a>
+                <button id="replay-voice-btn" class="btn btn-secondary" style="display:none;">
+                  🔊 Play with AI Voice
+                </button>
+                <button id="share-preview-btn-2" class="btn btn-secondary">🔗 Share</button>
+                <button class="btn btn-ghost" onclick="location.reload()">🔄 Create Another</button>
+              </div>
+              <!-- Credits remaining after generation -->
+              <div id="result-credits-left" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;font-size:0.82rem;color:var(--text-300);"></div>
+              <p style="font-size:0.78rem;color:var(--text-400);margin-top:10px;">💡 Tip: Right-click the video → <strong>"Save video as…"</strong> to save. For AI Presenter: click <strong>"Play with AI Voice"</strong> to hear the avatar speak while watching.</p>
+
+            </div>
+          </div>
+
+          <!-- Right: Summary -->
+          <div class="form-panel">
+            <h3>📋 Ad Summary</h3>
+            <div style="display:flex;flex-direction:column;gap:14px;" id="summary-panel">
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:0.75rem;color:var(--text-400);text-transform:uppercase;letter-spacing:0.05em;">Images</span>
+                <div class="image-preview-grid" id="summary-images" style="grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+              </div>
+              <div class="divider" style="margin:8px 0;"></div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-400);">Product Name</span>
+                <p id="sum-name" style="font-weight:600;margin-top:2px;">—</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-400);">Tagline</span>
+                <p id="sum-tagline" style="font-weight:500;margin-top:2px;">—</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-400);">Tone</span>
+                <p id="sum-tone" style="margin-top:2px;">—</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-400);">Animation</span>
+                <p id="sum-anim" style="margin-top:2px;">—</p>
+              </div>
+              <div>
+                <span style="font-size:0.75rem;color:var(--text-400);">Brand Color</span>
+                <div id="sum-color" style="width:32px;height:32px;border-radius:6px;margin-top:4px;background:#7c3aed;border:1px solid var(--border);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Settings Modal ─────────────────────────────────── -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal" style="max-width:520px;">
+      <button class="modal-close" data-modal-close="settings-modal">✕</button>
+      <h3 style="margin-bottom:8px;">⚙️ API Settings</h3>
+      <p style="font-size:0.88rem;margin-bottom:24px;">Configure your Shotstack API key for real MP4 video generation.</p>
+
+      <div class="glass" style="padding:16px;border-radius:var(--radius-md);margin-bottom:20px;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.05);">
+        <p style="font-size:0.82rem;color:var(--text-200);">
+          🔑 Get a <strong>free Shotstack API key</strong> at
+          <a href="https://shotstack.io" target="_blank" style="color:var(--gold);text-decoration:underline;">shotstack.io</a>
+          — no credit card required. Use the sandbox tier for free renders.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="shotstack-api-key">Shotstack API Key (Sandbox)</label>
+        <input class="form-input" type="password" id="shotstack-api-key" placeholder="Enter your Shotstack sandbox API key...">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button id="save-api-key" class="btn btn-primary" style="flex:1">💾 Save Key</button>
+        <button class="btn btn-ghost" data-modal-close="settings-modal">Cancel</button>
+      </div>
+
+      <div class="divider"></div>
+      <p style="font-size:0.78rem;color:var(--text-400);">Your API key is stored locally in your browser only. We never send it to our servers.</p>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="js/main.js"></script>
+  <script src="js/studio.js"></script>
+  <!-- Summary filling is handled by studio.js -->
+</body>
+</html>

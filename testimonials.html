@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="What our customers say about AdVision AI — real reviews from creators, brands, and marketers.">
+  <title>Reviews & Testimonials — AdVision AI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .test-hero { padding: 80px 0 60px; text-align: center; }
+    .test-hero h1 { margin-bottom: 16px; }
+    .test-hero p  { font-size: 1.05rem; max-width: 560px; margin: 0 auto; }
+
+    /* Rating summary */
+    .rating-summary {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 32px;
+      align-items: center;
+      max-width: 560px;
+      margin: 0 auto 64px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 32px 36px;
+      backdrop-filter: blur(20px);
+    }
+    .rating-big {
+      text-align: center;
+    }
+    .rating-big .num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 5rem;
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--gold), #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .rating-big .stars { justify-content: center; font-size: 1.3rem; margin: 6px 0; }
+    .rating-big .count { font-size: 0.8rem; color: var(--text-400); }
+    .rating-bars { display: flex; flex-direction: column; gap: 8px; }
+    .rating-row { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+    .rating-row span:first-child { width: 36px; text-align: right; color: var(--text-300); }
+    .rating-row .bar { flex: 1; height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+    .rating-row .bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), #f97316); }
+    .rating-row .pct { width: 40px; color: var(--text-400); }
+
+    /* Testimonial cards */
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .test-card {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .test-card-header { display: flex; align-items: center; gap: 14px; }
+    .test-avatar {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+      flex-shrink: 0;
+    }
+    .test-info { flex: 1; }
+    .test-name { font-weight: 700; font-size: 0.95rem; }
+    .test-role { font-size: 0.78rem; color: var(--text-400); }
+    .test-text { font-size: 0.88rem; color: var(--text-200); line-height: 1.75; flex: 1; }
+    .test-footer { display: flex; align-items: center; justify-content: space-between; }
+    .test-date { font-size: 0.75rem; color: var(--text-400); }
+    .test-platform { font-size: 0.72rem; color: var(--text-400); display: flex; align-items: center; gap: 4px; }
+    .verified { color: var(--success); font-size: 0.72rem; display: flex; align-items: center; gap: 3px; }
+
+    /* Featured testimonial */
+    .test-featured {
+      background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(6,182,212,0.1));
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius-xl);
+      padding: 48px;
+      text-align: center;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .test-featured::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 40px;
+      font-size: 12rem;
+      color: rgba(124,58,237,0.1);
+      font-family: 'Outfit', sans-serif;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .test-featured blockquote {
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: var(--text-100);
+      line-height: 1.6;
+      font-style: italic;
+      max-width: 700px;
+      margin: 0 auto 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .test-featured .attribution {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .test-featured .attribution .avatar {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Category filter */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 8px 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-300);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--primary);
+      color: var(--primary-light);
+      background: rgba(124,58,237,0.1);
+    }
+
+    /* CTA */
+    .test-cta {
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    @media (max-width: 900px) {
+      .test-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .test-grid { grid-template-columns: 1fr; }
+      .rating-summary { grid-template-columns: 1fr; }
+      .test-featured { padding: 32px 24px; }
+      .test-featured blockquote { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🎬</div>
+        AdVision AI
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="studio.html">Studio</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="testimonials.html">Reviews</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="auth.html" id="nav-auth-btn" class="btn btn-primary btn-sm">Sign In</a>
+        <div id="nav-user-menu" style="display:none; align-items:center; gap:10px;">
+          <a href="studio.html" class="btn btn-accent btn-sm">Open Studio</a>
+          <div class="nav-avatar" id="nav-avatar">U</div>
+          <a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Sign Out</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="container">
+      <!-- Hero -->
+      <div class="test-hero reveal">
+        <div class="section-label">⭐ Reviews</div>
+        <h1>Loved by <span class="grad-text">12,000+ Creators</span></h1>
+        <p>See what brands, marketers, and entrepreneurs say about AdVision AI.</p>
+      </div>
+
+      <!-- Rating Summary -->
+      <div class="rating-summary reveal">
+        <div class="rating-big">
+          <div class="num">4.9</div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <div class="count">Based on 3,842 reviews</div>
+        </div>
+        <div class="rating-bars">
+          <div class="rating-row"><span>5 ⭐</span><div class="bar"><div class="bar-fill" style="width:88%"></div></div><span class="pct">88%</span></div>
+          <div class="rating-row"><span>4 ⭐</span><div class="bar"><div class="bar-fill" style="width:9%"></div></div><span class="pct">9%</span></div>
+          <div class="rating-row"><span>3 ⭐</span><div class="bar"><div class="bar-fill" style="width:2%"></div></div><span class="pct">2%</span></div>
+          <div class="rating-row"><span>2 ⭐</span><div class="bar"><div class="bar-fill" style="width:0.5%"></div></div><span class="pct">0.5%</span></div>
+          <div class="rating-row"><span>1 ⭐</span><div class="bar"><div class="bar-fill" style="width:0.5%"></div></div><span class="pct">0.5%</span></div>
+        </div>
+      </div>
+
+      <!-- Featured -->
+      <div class="test-featured reveal">
+        <div class="stars" style="justify-content:center;font-size:1.4rem;margin-bottom:20px;">⭐⭐⭐⭐⭐</div>
+        <blockquote>
+          "AdVision AI completely transformed our e-commerce marketing. We went from spending $3,000/month on video production to generating stunning ad videos ourselves in under a minute. Our Instagram ROAS improved by 340%."
+        </blockquote>
+        <div class="attribution">
+          <div class="avatar" style="background:linear-gradient(135deg,var(--primary),var(--accent))">S</div>
+          <div style="text-align:left;">
+            <div style="font-weight:700;">Sarah Chen</div>
+            <div style="font-size:0.82rem;color:var(--text-400);">Founder, LuxeStyle Co. · 12,400 followers</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar reveal">
+        <button class="filter-btn active" onclick="filterTestimonials('all')">All Reviews</button>
+        <button class="filter-btn" onclick="filterTestimonials('ecommerce')">🛍️ E-commerce</button>
+        <button class="filter-btn" onclick="filterTestimonials('agency')">🎯 Agencies</button>
+        <button class="filter-btn" onclick="filterTestimonials('startup')">🚀 Startups</button>
+        <button class="filter-btn" onclick="filterTestimonials('creator')">🎬 Creators</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="test-grid" id="test-grid">
+
+        <div class="test-card glass glass-hover reveal" data-category="ecommerce">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#7c3aed,#9d5ff5)">M</div>
+            <div class="test-info">
+              <div class="test-name">Marcus Johnson</div>
+              <div class="test-role">Amazon FBA Seller</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"I uploaded my product photos and had a professional 15-second ad video in under 2 minutes. The Ken Burns zoom effect on my product shots looks absolutely cinematic. Sales went up 28% after running these ads."</p>
+          <div class="test-footer">
+            <span class="test-date">March 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-1" data-category="agency">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">P</div>
+            <div class="test-info">
+              <div class="test-name">Priya Sharma</div>
+              <div class="test-role">Digital Marketing Manager</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"We manage 30+ brand accounts and AdVision AI has cut our video production time by 80%. The brand color matching and tone customization are incredibly accurate. Our clients love the results."</p>
+          <div class="test-footer">
+            <span class="test-date">April 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-2" data-category="creator">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#ec4899,#be185d)">A</div>
+            <div class="test-info">
+              <div class="test-name">Aisha Williams</div>
+              <div class="test-role">Instagram Content Creator</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"Finally an AI tool that gets the aesthetic right! The 'Luxury' tone option produces exactly the kind of polished, high-end content my followers expect. I use it every single week now."</p>
+          <div class="test-footer">
+            <span class="test-date">May 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal" data-category="startup">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706)">R</div>
+            <div class="test-info">
+              <div class="test-name">Raj Patel</div>
+              <div class="test-role">Tech Startup Founder</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"As a bootstrapped startup, hiring a video production team wasn't an option. AdVision AI gave us enterprise-quality ads at a fraction of the cost. We raised our seed round partly thanks to our ad content."</p>
+          <div class="test-footer">
+            <span class="test-date">February 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-1" data-category="ecommerce">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#10b981,#059669)">L</div>
+            <div class="test-info">
+              <div class="test-name">Lisa Nguyen</div>
+              <div class="test-role">Etsy Shop Owner</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"I was skeptical at first but the results blew me away. My handmade jewelry looks SO professional in the videos. Sold out my holiday collection within 48 hours of running the ads. Incredible tool!"</p>
+          <div class="test-footer">
+            <span class="test-date">January 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-2" data-category="agency">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#6366f1,#4f46e5)">D</div>
+            <div class="test-info">
+              <div class="test-name">David Kim</div>
+              <div class="test-role">Creative Director, BrandWave Agency</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"We've tried every AI video tool out there. AdVision AI is the only one that consistently delivers results that look genuinely professional. The animation quality and text rendering is exceptional."</p>
+          <div class="test-footer">
+            <span class="test-date">April 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal" data-category="creator">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">Z</div>
+            <div class="test-info">
+              <div class="test-name">Zoe Thompson</div>
+              <div class="test-role">TikTok Shop Creator</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"The vertical format export is perfect for TikTok! I upload my product, write the tagline, and boom — a trending-style product showcase is ready. My views doubled when I started using AdVision."</p>
+          <div class="test-footer">
+            <span class="test-date">March 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-1" data-category="startup">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">N</div>
+            <div class="test-info">
+              <div class="test-name">Nina Rodriguez</div>
+              <div class="test-role">SaaS Product Marketer</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"Even for software products, AdVision AI works great — I use UI screenshots as my 'product images'. The professional tone option makes everything look polished. Our LinkedIn ad CTR improved by 60%."</p>
+          <div class="test-footer">
+            <span class="test-date">May 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+        <div class="test-card glass glass-hover reveal anim-delay-2" data-category="ecommerce">
+          <div class="test-card-header">
+            <div class="test-avatar" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">T</div>
+            <div class="test-info">
+              <div class="test-name">Tom Bradley</div>
+              <div class="test-role">Dropshipper & E-com Coach</div>
+            </div>
+          </div>
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="test-text">"I teach dropshipping to 5,000 students and AdVision AI is now a mandatory tool in my course. The ROI is insane — $29/month Pro plan vs $2,000 for a video editor. My students are getting amazing results."</p>
+          <div class="test-footer">
+            <span class="test-date">February 2026</span>
+            <span class="verified">✅ Verified Purchase</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="test-cta reveal">
+        <h2 style="margin-bottom:12px;">Join <span class="grad-text">12,000+ Creators</span></h2>
+        <p style="margin-bottom:32px;">Start creating professional ad videos today — no credit card required.</p>
+        <a href="auth.html" class="btn btn-primary btn-lg">Get Started Free 🚀</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2026 AdVision AI. All rights reserved.</p>
+        <div style="display:flex;gap:16px;font-size:0.85rem;">
+          <a href="index.html" style="color:var(--text-400);">Home</a>
+          <a href="pricing.html" style="color:var(--text-400);">Pricing</a>
+          <a href="contact.html" style="color:var(--text-400);">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/main.js"></script>
+  <script>
+    function filterTestimonials(cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('.test-card').forEach(card => {
+        if (cat === 'all' || card.dataset.category === cat) {
+          card.style.display = '';
+          card.style.animation = 'fadeUp 0.4s ease both';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
